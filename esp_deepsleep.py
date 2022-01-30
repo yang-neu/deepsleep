@@ -4,7 +4,9 @@ import time
 from machine import Pin
 
 # esp-cam
-led = Pin(33, Pin.OUT) 
+# led = Pin(33, Pin.OUT) 
+# Aideepen ESP32S
+led = Pin(2, Pin.OUT) 
 
 def led_fast(cnt):
 

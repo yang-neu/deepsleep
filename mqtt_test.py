@@ -1,7 +1,8 @@
 # Complete project details at https://RandomNerdTutorials.com
 
 import time
-from umqttsimple import MQTTClient
+#from umqttsimple import MQTTClient
+from umqtt.simple import MQTTClient
 import ubinascii
 import machine
 import micropython
@@ -11,9 +12,14 @@ esp.osdebug(None)
 import gc
 gc.collect()
 
+import ujson
+#导入配置文件
+from conf import Conf
+
 ssid = 'PROAPIS'
 password = 'Kamimutsuna!109'
 mqtt_server = 'broker.hivemq.com'
+#mqtt_server = 'mqtt.hivespeak.net'
 #EXAMPLE IP ADDRESS
 #mqtt_server = '192.168.1.144'
 client_id = ubinascii.hexlify(machine.unique_id())
@@ -71,7 +77,14 @@ while True:
     client.check_msg()
     if (time.time() - last_message) > message_interval:
       msg = b'Hello #%d' % counter
-      client.publish(topic_pub, msg)
+      #client.publish(topic_pub, msg)
+      now = time.localtime()
+      nows = f"%d-%02d-%02d %02d:%02d:%02d.000"%(now[0],now[1],now[2],now[3],now[4],now[5])
+      scale_id = 'b827ebc76670'
+      payload = {"scales_id": scale_id, "at": nows}
+      msg = {'scales_id': 'b827ebc76670', 'at': '2022-02-07 21:56:53.678'}
+      print(ujson.dumps(payload))
+      client.publish(Conf.mac_topic_publish,ujson.dumps(payload)) 
       last_message = time.time()
       counter += 1
   except OSError as e:
